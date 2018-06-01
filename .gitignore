@@ -16,3 +16,4 @@ gradle-app.setting
 /.project
 /todo.txt
 /bin/
+/.settings/
