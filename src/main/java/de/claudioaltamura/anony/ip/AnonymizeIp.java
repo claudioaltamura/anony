@@ -5,10 +5,9 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class AnonymizeIpDefault implements AnonymizeIp {
+public class AnonymizeIp {
 
-	@Override
-	public String anonymize(String ipAddress) throws AnonymizeException {
+	public static String anonymize(String ipAddress) throws AnonymizeException {
 		String anonymizedIp = null;
 		try {
 			InetAddress ip = InetAddress.getByName(ipAddress);
@@ -24,7 +23,7 @@ public class AnonymizeIpDefault implements AnonymizeIp {
 		return anonymizedIp;
 	}
 
-	String maskInet4Address(InetAddress inet4Address) {
+	static String maskInet4Address(InetAddress inet4Address) {
 		String ip4Address = inet4Address.getHostAddress();
 		String[] ipSplits = ip4Address.split("\\.");
 		ipSplits[3] = "0";

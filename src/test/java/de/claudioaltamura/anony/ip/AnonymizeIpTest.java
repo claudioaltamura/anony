@@ -8,13 +8,12 @@ import java.net.UnknownHostException;
 
 import org.junit.jupiter.api.Test;
 
-class AnonymizeIpDefaultTest {
+class AnonymizeIpTest {
 
 	@Test
-	void testMaskIpV4Address() throws UnknownHostException {
-		AnonymizeIpDefault anonymizeIp = new AnonymizeIpDefault();
+	public void testMaskIpV4Address() throws UnknownHostException {
 		InetAddress inet4Address = Inet4Address.getByName("127.0.0.1");
-		assertEquals("127.0.0.0", anonymizeIp.maskInet4Address(inet4Address));
+		assertEquals("127.0.0.0", AnonymizeIp.maskInet4Address(inet4Address));
 	}
 
 }
