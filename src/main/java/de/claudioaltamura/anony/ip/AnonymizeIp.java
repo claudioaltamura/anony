@@ -7,7 +7,12 @@ import java.net.UnknownHostException;
 
 public class AnonymizeIp {
 
-	public static String anonymize(String ipAddress) throws AnonymizeException {
+	public static String anonymize(final String ipAddress) throws AnonymizeException {
+		if(ipAddress == null || ipAddress.isEmpty())
+		{
+			throw new AnonymizeException("ip address is null or empty!");
+		}
+
 		String anonymizedIp = null;
 		try {
 			InetAddress ip = InetAddress.getByName(ipAddress);
@@ -23,7 +28,7 @@ public class AnonymizeIp {
 		return anonymizedIp;
 	}
 
-	static String maskInet4Address(InetAddress inet4Address) {
+	private static String maskInet4Address(InetAddress inet4Address) {
 		String ip4Address = inet4Address.getHostAddress();
 		String[] ipSplits = ip4Address.split("\\.");
 		ipSplits[3] = "0";
