@@ -4,8 +4,11 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.BitSet;
 
 public class AnonymizeIp {
+
+	private static final int LAST_80_BYTES = 45;
 
 	public static String anonymize(final String ipAddress) throws AnonymizeException {
 		if(ipAddress == null || ipAddress.isEmpty())
@@ -20,7 +23,7 @@ public class AnonymizeIp {
 			{
 				return maskInet4Address((Inet4Address)ip);
 			} else if(ip instanceof Inet6Address) {
-				throw new UnsupportedOperationException("not implemented yet");
+				return maskInet6Address((Inet6Address)ip);
 			}
 		} catch (UnknownHostException e) {
 			throw new AnonymizeException("not a valid ip address " + ipAddress);
@@ -40,6 +43,26 @@ public class AnonymizeIp {
 				
 		}
 		return sb.toString();
+	}
+
+	private static String maskInet6Address(Inet6Address inet6Address) throws UnknownHostException {
+		byte[] address = inet6Address.getAddress();
+		
+		BitSet bitSet = BitSet.valueOf(address);
+		printBitSet(bitSet);
+		for(int i = bitSet.length(); i > LAST_80_BYTES - 1; i--) {
+			bitSet.clear(i);
+		}
+		printBitSet(bitSet);
+		
+        InetAddress maskedIpv6Address = Inet6Address.getByAddress(bitSet.toByteArray());
+        
+		return maskedIpv6Address.getHostAddress();
+	}
+
+	private static void printBitSet(BitSet bitSet) {
+		bitSet.stream().forEach((i)->System.out.print(Integer.toString(i, 2) + " "));
+		System.out.println("\n");
 	}
 
 }
