@@ -4,11 +4,8 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.BitSet;
 
 public class AnonymizeIp {
-
-	private static final int LAST_80_BYTES = 45;
 
 	public static String anonymize(final String ipAddress) throws AnonymizeException {
 		if(ipAddress == null || ipAddress.isEmpty())
@@ -16,9 +13,9 @@ public class AnonymizeIp {
 			throw new AnonymizeException("ip address is null or empty!");
 		}
 
-		String anonymizedIp = null;
+		final String anonymizedIp = null;
 		try {
-			InetAddress ip = InetAddress.getByName(ipAddress);
+			final InetAddress ip = InetAddress.getByName(ipAddress);
 			if(ip instanceof Inet4Address)
 			{
 				return maskInet4Address((Inet4Address)ip);
@@ -31,38 +28,32 @@ public class AnonymizeIp {
 		return anonymizedIp;
 	}
 
-	private static String maskInet4Address(InetAddress inet4Address) {
-		String ip4Address = inet4Address.getHostAddress();
-		String[] ipSplits = ip4Address.split("\\.");
+	private static String maskInet4Address(final InetAddress inet4Address) {
+		final String ipV4Address = inet4Address.getHostAddress();
+		final String[] ipSplits = ipV4Address.split("\\.");
 		ipSplits[3] = "0";
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < ipSplits.length; i++) {
 			sb.append(ipSplits[i]);
-			if(i +1 < ipSplits.length)
+			if(i + 1 < ipSplits.length)
 				sb.append(".");
-				
 		}
+		
 		return sb.toString();
 	}
 
-	private static String maskInet6Address(Inet6Address inet6Address) throws UnknownHostException {
-		byte[] address = inet6Address.getAddress();
+	private static String maskInet6Address(final Inet6Address inet6Address) throws UnknownHostException {
+		final byte[] ipV6Address = inet6Address.getAddress();
+		byte[] maskedIpAddress = new byte[ipV6Address.length];
+		System.arraycopy(ipV6Address, 0, maskedIpAddress, 0, ipV6Address.length);
 		
-		BitSet bitSet = BitSet.valueOf(address);
-		printBitSet(bitSet);
-		for(int i = bitSet.length(); i > LAST_80_BYTES - 1; i--) {
-			bitSet.clear(i);
+		for(int i = maskedIpAddress.length-1; i > 7; i--) {
+			maskedIpAddress[i] = 0;
 		}
-		printBitSet(bitSet);
-		
-        InetAddress maskedIpv6Address = Inet6Address.getByAddress(bitSet.toByteArray());
-        
-		return maskedIpv6Address.getHostAddress();
-	}
+	
+        final InetAddress maskedIpv6Address = Inet6Address.getByAddress(maskedIpAddress);
 
-	private static void printBitSet(BitSet bitSet) {
-		bitSet.stream().forEach((i)->System.out.print(Integer.toString(i, 2) + " "));
-		System.out.println("\n");
+        return maskedIpv6Address.getHostAddress();
 	}
 
 }
